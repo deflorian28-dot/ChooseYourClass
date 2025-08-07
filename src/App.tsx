@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type NodeID = string;
 
@@ -238,7 +238,24 @@ const decisionTree: DecisionTree = {
 
 export default function App() {
   const [currentNode, setCurrentNode] = useState<NodeID>("start");
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   const node = decisionTree[currentNode];
+
+  useEffect(() => {
+    if (!node?.options) {
+      setIsWaiting(true);
+      setShowResult(false);
+      const timer = setTimeout(() => {
+        setIsWaiting(false);
+        setShowResult(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsWaiting(false);
+      setShowResult(false);
+    }
+  }, [node]);
 
   const restart = () => setCurrentNode("start");
 
@@ -252,34 +269,63 @@ export default function App() {
   }
 
   if (!node.options) {
-    return (
-      <div
-        style={{
+    if (isWaiting && !showResult) {
+      return (
+        <div style={{
           maxWidth: 600,
           margin: "40px auto",
           padding: 20,
           textAlign: "center",
           border: "1px solid #ccc",
           borderRadius: 8,
-        }}
-      >
-        <h2 style={{ fontSize: 24, marginBottom: 20 }}>🎉 Risultato: {node.text}</h2>
-        <button
-          onClick={restart}
+        }}>
+          <div className="hourglass-container">
+            <svg className="hourglass" viewBox="0 0 64 96" width="80" height="120">
+              <g>
+                <rect x="20" y="8" width="24" height="8" rx="4" fill="#bfa76a" />
+                <rect x="20" y="80" width="24" height="8" rx="4" fill="#bfa76a" />
+                <path d="M24 16 Q32 48 24 80" stroke="#bfa76a" strokeWidth="4" fill="none" />
+                <path d="M40 16 Q32 48 40 80" stroke="#bfa76a" strokeWidth="4" fill="none" />
+                <polygon className="hourglass-sand-top" points="28,24 36,24 32,44" fill="#ffe066" />
+                <rect className="hourglass-sand-flow" x="30.5" y="44" width="3" height="16" rx="1.5" fill="#ffe066" />
+                <ellipse className="hourglass-sand-bottom" cx="32" cy="72" rx="8" ry="4" fill="#ffe066" />
+              </g>
+            </svg>
+            <div style={{ marginTop: 16, fontSize: 20, color: '#bfa76a' }}>Calcolo in corso...</div>
+          </div>
+        </div>
+      );
+    }
+    if (showResult) {
+      return (
+        <div
           style={{
-            padding: "10px 20px",
-            fontSize: 16,
-            cursor: "pointer",
-            borderRadius: 4,
-            backgroundColor: "#003366",
-            color: "#ffffff",
-            border: "none",
+            maxWidth: 600,
+            margin: "40px auto",
+            padding: 20,
+            textAlign: "center",
+            border: "1px solid #ccc",
+            borderRadius: 8,
           }}
         >
-          Ricomincia
-        </button>
-      </div>
-    );
+          <h2 style={{ fontSize: 24, marginBottom: 20 }}> 389 Risultato: {node.text}</h2>
+          <button
+            onClick={restart}
+            style={{
+              padding: "10px 20px",
+              fontSize: 16,
+              cursor: "pointer",
+              borderRadius: 4,
+              backgroundColor: "#003366",
+              color: "#ffffff",
+              border: "none",
+            }}
+          >
+            Ricomincia
+          </button>
+        </div>
+      );
+    }
   }
 
   return (
