@@ -40,3 +40,49 @@
 .read-the-docs {
   color: #888;
 }
+
+.hourglass-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+
+.hourglass {
+  display: block;
+}
+
+.hourglass-sand-top {
+  transform-origin: 32px 44px;
+  animation: sandTopDisappear 3s linear forwards;
+}
+
+.hourglass-sand-flow {
+  opacity: 0;
+  animation: sandFlowAppear 3s linear forwards;
+}
+
+.hourglass-sand-bottom {
+  transform-origin: 32px 72px;
+  transform: scaleY(0.2);
+  animation: sandBottomFill 3s linear forwards;
+}
+
+@keyframes sandTopDisappear {
+  0% { opacity: 1; }
+  80% { opacity: 0.2; }
+  100% { opacity: 0; }
+}
+
+@keyframes sandFlowAppear {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes sandBottomFill {
+  0% { transform: scaleY(0.2); }
+  100% { transform: scaleY(1); }
+}
