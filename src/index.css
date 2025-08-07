@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -8,14 +10,14 @@
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Crimson Text', serif;
+  line-height: 1.6;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #1a237e !important;
-
+  color-scheme: dark;
+  color: #e8dcc0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -27,16 +29,7 @@ html {
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #1a237e !important;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
 }
 
 body {
@@ -44,9 +37,32 @@ body {
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #1a237e !important;
   width: 100%;
   overflow-x: hidden;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 206, 84, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+h1, h2, h3 {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  color: #f4e4bc;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
@@ -54,34 +70,257 @@ h1 {
   line-height: 1.1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+h2 {
+  font-size: 1.8em;
+  line-height: 1.3;
 }
 
+button {
+  border-radius: 12px;
+  border: 2px solid #8b7355;
+  padding: 12px 20px;
+  font-size: 1.1em;
+  font-weight: 500;
+  font-family: 'Crimson Text', serif;
+  background: linear-gradient(145deg, #2c1810, #3d2317);
+  color: #e8dcc0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 206, 84, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+button:hover {
+  border-color: #d4af37;
+  background: linear-gradient(145deg, #3d2317, #4a2a1a);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 2px solid #d4af37;
+  outline-offset: 2px;
+}
+
+a {
+  font-weight: 500;
+  color: #d4af37;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #ffce54;
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+}
+
+.fantasy-container {
+  background: rgba(20, 20, 40, 0.9);
+  border: 2px solid #8b7355;
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.fantasy-container::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #d4af37, #8b7355, #d4af37);
+  border-radius: 16px;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+.result-container {
+  background: linear-gradient(145deg, rgba(30, 30, 60, 0.95), rgba(20, 20, 40, 0.95));
+  border: 3px solid #d4af37;
+  border-radius: 20px;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.6),
+    inset 0 2px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.result-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.result-title {
+  background: linear-gradient(45deg, #d4af37, #ffce54, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2.2em;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.result-description {
+  font-size: 1.2em;
+  line-height: 1.7;
+  color: #e8dcc0;
+  font-style: italic;
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.restart-button {
+  background: linear-gradient(145deg, #8b4513, #a0522d);
+  border: 2px solid #d4af37;
+  font-size: 1.1em;
+  padding: 14px 28px;
+  font-weight: 600;
+}
+
+.restart-button:hover {
+  background: linear-gradient(145deg, #a0522d, #b8651f);
+  border-color: #ffce54;
+}
+
+/* Ensure consistent background across all screen sizes and themes */
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #1a237e !important;
+    color: #e8dcc0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
   }
-  a:hover {
-    color: #747bff;
+  
+  html {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
   }
-  button {
-    background-color: #f9f9f9;
+  
+  body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
   }
+}
+
+/* D20 Dice Animation */
+.dice-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.d20-dice {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  margin: 20px auto;
+  transform-style: preserve-3d;
+  animation: spinDice 3s ease-in-out infinite;
+}
+
+.d20-face {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(145deg, #d4af37, #ffce54);
+  border: 3px solid #8b7355;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 2.5em;
+  font-weight: 600;
+  color: #2c1810;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes spinDice {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% {
+    transform: rotateX(90deg) rotateY(180deg) rotateZ(45deg);
+  }
+  50% {
+    transform: rotateX(180deg) rotateY(360deg) rotateZ(90deg);
+  }
+  75% {
+    transform: rotateX(270deg) rotateY(540deg) rotateZ(135deg);
+  }
+  100% {
+    transform: rotateX(360deg) rotateY(720deg) rotateZ(180deg);
+  }
+}
+
+.dice-rolling-text {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8em;
+  color: #d4af37;
+  text-align: center;
+  margin-top: 20px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.dice-subtitle {
+  font-family: 'Crimson Text', serif;
+  font-size: 1.2em;
+  color: #e8dcc0;
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
 }

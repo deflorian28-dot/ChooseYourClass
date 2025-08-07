@@ -283,10 +283,14 @@ export default function App() {
   const [resultSound, setResultSound] = useState<Howl | null>(null); // State for the result sound
   const [musicSound, setMusicSound] = useState<Howl | null>(null); // State for the music
   const [musicPlaying, setMusicPlaying] = useState(false); // Track if music is playing
+  const [diceRollSound, setDiceRollSound] = useState<Howl | null>(null); // State for dice roll sound
+  const [isRollingDice, setIsRollingDice] = useState(false); // Track if dice is rolling
+  const [showResult, setShowResult] = useState(false); // Track if we should show the result
   const node = decisionTree[currentNode];
 
   const resultSoundPath = '/assets/ding.mp3'; // Path to the single result sound - DING.MP3
   const musicSoundPath = '/assets/music.mp3'; // Path to the music
+  const diceRollSoundPath = '/assets/dice-roll.mp3'; // Path to the dice roll sound
 
   useEffect(() => {
     // Load the option click sound
@@ -332,20 +336,52 @@ export default function App() {
     });
     setMusicSound(newMusicSound);
 
+    // Load the dice roll sound
+    const newDiceRollSound = new Howl({
+      src: [diceRollSoundPath],
+      preload: true,
+      onload: () => {
+        console.log("Dice roll sound loaded successfully");
+      },
+      onloaderror: (error: any) => {
+        console.error("Error loading dice roll sound:", error);
+      }
+    });
+    setDiceRollSound(newDiceRollSound);
+
     return () => {
       if (newOptionClickSound) newOptionClickSound.unload();
       if (newResultSound) newResultSound.unload();
       if (newMusicSound) newMusicSound.unload(); // Unload the music
+      if (newDiceRollSound) newDiceRollSound.unload(); // Unload the dice roll sound
     };
-  }, [resultSoundPath, musicSoundPath]); // Only re-run if paths change
+  }, [resultSoundPath, musicSoundPath, diceRollSoundPath]); // Only re-run if paths change
 
-  // Effect to play the result sound
+  // Effect to trigger dice roll animation when reaching a result node
   useEffect(() => {
-    if (!node?.options && resultSound) { // Check if it's a result node AND the sound is loaded
-      console.log("Playing result sound");
-      resultSound.play();
+    if (!node?.options && !isRollingDice && !showResult) { // Check if it's a result node and not already rolling
+      console.log("Starting dice roll animation");
+      setIsRollingDice(true);
+      setShowResult(false);
+      
+      // Play dice roll sound
+      if (diceRollSound) {
+        diceRollSound.play();
+      }
+      
+      // After 3 seconds, stop rolling and show result
+      setTimeout(() => {
+        setIsRollingDice(false);
+        setShowResult(true);
+        
+        // Play result sound
+        if (resultSound) {
+          console.log("Playing result sound");
+          resultSound.play();
+        }
+      }, 3000);
     }
-  }, [node, resultSound]); // Depend on node and resultSound
+  }, [node, diceRollSound, resultSound, isRollingDice, showResult]); // Depend on relevant state
 
   // Effect to start music when the component mounts or restarts
   useEffect(() => {
@@ -359,12 +395,16 @@ export default function App() {
   const restart = () => {
     setCurrentNode("start");
     setHistory(["start"]);
+    setIsRollingDice(false);
+    setShowResult(false);
   };
 
   const restartFromBeginning = () => {
     setCurrentNode("start");
     setShowStartScreen(true);
     setHistory(["start"]);
+    setIsRollingDice(false);
+    setShowResult(false);
 
     // Stop the current music if it's playing
     // if (musicSound) {
@@ -466,30 +506,48 @@ export default function App() {
           </>
         ) : (
           <>
-            <div
-              className="result-container"
-              style={{
-                maxWidth: 650,
-                margin: "40px auto",
-                padding: 32,
-                textAlign: "center" as const,
-              }}
-            >
-              <div style={{ fontSize: 48, marginBottom: 16 }}>⚔️</div>
-              <h2 className="result-title">La tua classe: {node.text}</h2>
-              {"description" in node && (
-                <p className="result-description">
-                  {node.description}
-                </p>
-              )}
-              <button
-                className="restart-button"
-                onClick={restartFromBeginning}
-                style={buttonStyle}
+            {isRollingDice ? (
+              <div
+                className="dice-container fantasy-container"
+                style={{
+                  maxWidth: 650,
+                  margin: "40px auto",
+                  padding: 32,
+                  textAlign: "center" as const,
+                }}
               >
-                Ricomincia l'Avventura
-              </button>
-            </div>
+                <div className="d20-dice">
+                  <div className="d20-face">20</div>
+                </div>
+                <div className="dice-rolling-text">Rolling the dice...</div>
+                <div className="dice-subtitle">Determining your D&D class</div>
+              </div>
+            ) : showResult ? (
+              <div
+                className="result-container"
+                style={{
+                  maxWidth: 650,
+                  margin: "40px auto",
+                  padding: 32,
+                  textAlign: "center" as const,
+                }}
+              >
+                <div style={{ fontSize: 48, marginBottom: 16 }}>⚔️</div>
+                <h2 className="result-title">La tua classe: {node.text}</h2>
+                {"description" in node && (
+                  <p className="result-description">
+                    {node.description}
+                  </p>
+                )}
+                <button
+                  className="restart-button"
+                  onClick={restartFromBeginning}
+                  style={buttonStyle}
+                >
+                  Ricomincia l'Avventura
+                </button>
+              </div>
+            ) : null}
           </>
         )
       ) : (
