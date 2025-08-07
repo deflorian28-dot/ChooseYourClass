@@ -260,7 +260,9 @@ const goBackButtonStyle: React.CSSProperties = {
 
 const appContainerStyle: React.CSSProperties = {
   backgroundColor: '#1a237e', // Dark Blue
+  backgroundImage: 'none', // Explicitly remove any background images
   minHeight: '100vh', // Ensure full height
+  width: '100vw', // Full viewport width
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -268,6 +270,9 @@ const appContainerStyle: React.CSSProperties = {
   paddingTop: '20px', // Add some padding at the top
   color: 'white', // Set default text color to white for better contrast
   fontFamily: 'sans-serif', // A basic font
+  margin: 0,
+  padding: '20px 20px 0 20px',
+  boxSizing: 'border-box',
 };
 
 export default function App() {
