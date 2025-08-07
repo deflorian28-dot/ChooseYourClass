@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Howl } from 'howler'; // Import Howl
 
 type NodeID = string;
 
@@ -9,6 +10,7 @@ type QuestionNode = {
 
 type ResultNode = {
   text: string;
+  description?: string;
   options?: undefined;
 };
 
@@ -22,10 +24,9 @@ const decisionTree: DecisionTree = {
     options: {
       "1": "Lancia incantesimi",
       "2": "Combatte senza incantesimi",
-      "3": "Mix dei due",
+      "3": "Un mix dei due",
     },
   },
-
   // Path 1 - Magic
   "1": {
     text: "Il tuo personaggio ha dedicato tutta la sua vita a questa magia o è qualcosa che gli viene più naturale?",
@@ -52,7 +53,7 @@ const decisionTree: DecisionTree = {
     text: "Il tuo personaggio preferisce essere il più versatile possibile o concentrarsi sugli incantesimi più potenti?",
     options: {
       end3: "Versatile",
-      end4: "Incantesimi potenti",
+      end4: "Incantesimi più potenti",
     },
   },
   "5": {
@@ -79,7 +80,7 @@ const decisionTree: DecisionTree = {
 
   // Path 2 - No Magic
   "2": {
-    text: "Che tipo di armi utilizza il tuo personaggio? A lungo raggio, combattimento ravvicinato o preferisce non usare armi?",
+    text: "Che tipo di armi utilizza il tuo personaggio? A lungo raggio? Combattimento ravvicinato? O preferisce non usare armi?",
     options: {
       "8": "Lungo raggio",
       "9": "Combattimento ravvicinato",
@@ -109,42 +110,42 @@ const decisionTree: DecisionTree = {
     },
   },
   "29": {
-    text: "Il tuo personaggio usa tecniche e strategie o abilità e forza?",
+    text: "Il tuo personaggio usa prevalentemente tecniche e strategie o la sua abilità e forza?",
     options: {
       "44": "Strategie",
       end15: "Abilità e forza",
     },
   },
   "44": {
-    text: "Usa le sue capacità per battere l'avversario o per guidare il gruppo?",
+    text: "Il tuo personaggio usa le sue capacità per battere l'avversario o per guidare il gruppo?",
     options: {
       end13: "Battere l'avversario",
       end14: "Guidare il gruppo",
     },
   },
   "9": {
-    text: "Il tuo personaggio combatte in modo normale o con trucchi sporchi/brutali?",
+    text: "Il tuo personaggio combatte in modo normale o anche con trucchi sporchi o brutali?",
     options: {
-      "13": "Normale",
-      "14": "Trucchi sporchi",
+      "13": "Soprattutto normale",
+      "14": "Non si trattiene dall'usare ogni mezzo",
     },
   },
   "13": {
-    text: "Tante opzioni o specializzazione?",
+    text: "Il tuo personaggio, in combattimento, preferisce avere tante opzioni o specializzarsi?",
     options: {
       "30": "Tante opzioni",
       "29": "Specializzarsi",
     },
   },
   "14": {
-    text: "Combattimento con forza bruta o sottile e preciso?",
+    text: "Il tuo personaggio combattime con forza bruta o in modo più sottile e preciso?",
     options: {
       end16: "Forza bruta",
       end17: "Sottile e preciso",
     },
   },
   "10": {
-    text: "Usa arti marziali o mezzi ferali?",
+    text: "Il tuo personaggio usa arti marziali o mezzi ferali?",
     options: {
       end18: "Arti marziali",
       end19: "Mezzi ferali",
@@ -153,28 +154,28 @@ const decisionTree: DecisionTree = {
 
   // Path 3 - Mix
   "3": {
-    text: "Il tuo personaggio combatte più con la magia o in altri modi?",
+    text: "Il tuo personaggio combatte più con la magia o più in altri modi?",
     options: {
       "17": "Magia",
       "18": "Altri modi",
     },
   },
   "17": {
-    text: "Più vicino alla vita di città o alla natura?",
+    text: "Il tuo personaggio si sente più vicino alla vita di città o alla natura?",
     options: {
       "19": "Città",
       "20": "Natura",
     },
   },
   "19": {
-    text: "Fa un po’ tutto o ha interessi specifici?",
+    text: "Il tuo personaggio vuole fare un po' tutto o ha interessi specifici?",
     options: {
-      end20: "Un po’ tutto",
+      end20: "Un po' tutto",
       "34": "Interessi specifici",
     },
   },
   "34": {
-    text: "Gli piace più l’arte, la scienza o il combattimento?",
+    text: "Al tuo personaggio interessa maggiormente l'arte, la scienza o il combattimento?",
     options: {
       end21: "Arte",
       end22: "Scienza",
@@ -182,21 +183,21 @@ const decisionTree: DecisionTree = {
     },
   },
   "39": {
-    text: "Combattimento diretto o con sotterfugi?",
+    text: "Il tuo personaggio sceglie maggiormente il combattimento diretto o tramite sotterfugi?",
     options: {
       end23: "Diretto",
       end24: "Sotterfugi",
     },
   },
   "20": {
-    text: "Ha un legame più con gli elementi o con gli animali?",
+    text: "Il tuo personaggio ha un legame più forte con gli elementi o con gli animali?",
     options: {
       end25: "Elementi",
       end26: "Animali",
     },
   },
   "18": {
-    text: "Si concentra su credo, studi o poteri?",
+    text: "Il tuo personaggio si concentra maggiormente sul suo credo, sui suoi studi o sul suo potere?",
     options: {
       end27: "Credo",
       end28: "Studi",
@@ -205,120 +206,379 @@ const decisionTree: DecisionTree = {
   },
 
   // Results
-  end1: { text: "Chierico" },
-  end2: { text: "Binder" },
-  end3: { text: "Archivista" },
-  end4: { text: "Mago" },
-  end5: { text: "Psion" },
-  end6: { text: "Stregone" },
-  end7: { text: "Warlock" },
-  end8: { text: "Dragonfire Adept" },
-  end9: { text: "Ranger" },
-  end10: { text: "Crusader" },
-  end11: { text: "Swordsage" },
-  end12: { text: "Warblade" },
-  end13: { text: "Swashbuckler" },
-  end14: { text: "Maresciallo" },
-  end15: { text: "Ladro" },
-  end16: { text: "Barbaro" },
-  end17: { text: "Ladro" },
-  end18: { text: "Monaco" },
-  end19: { text: "Totemist" },
-  end20: { text: "Factotum" },
-  end21: { text: "Bardo" },
-  end22: { text: "Artefice" },
-  end23: { text: "Mago combattente" },
-  end24: { text: "Beguiler" },
-  end25: { text: "Shugenja" },
-  end26: { text: "Druido" },
-  end27: { text: "Paladino" },
-  end28: { text: "Duskblade" },
-  end29: { text: "Guerriero psionico" },
+  end1: { text: "Chierico", description: "Incantatore divino legato a una divinità, guarisce e combatte il male o semina il terrore con i suoi poteri necromantici." },
+  end2: { text: "Binder", description: "Invoca poteri da entità demoniache con cui stringe patti temporanei." },
+  end3: { text: "Archivista", description: "Incantatore divino che apprende una grande varietà di magie tramite studio e disciplina." },
+  end4: { text: "Mago", description: "Maestro degli incantesimi arcani ottenuti attraverso studio e disciplina." },
+  end5: { text: "Psion", description: "Usa la forza della mente per manipolare la realtà intorno a sé." },
+  end6: { text: "Stregone", description: "Incantatore che lancia potenti magie arcane con spontaneità." },
+  end7: { text: "Warlock", description: "Incantatore che ottiene i suoi poteri soprannaturali da un patto con entità extraplanari." },
+  end8: { text: "Dragonfire Adept", description: "Incantatore con poteri draconici, usa soffio draconico e magie legate ai draghi." },
+  end9: { text: "Ranger", description: "Combattente esperto nella natura e nell'esplorazione, assieme al suo compagno animale." },
+  end10: { text: "Crusader", description: "Guerriero pesante guidato da ideali, usa manovre e tattiche per resistere ai colpi e rispondere con forza." },
+  end11: { text: "Swordsage", description: "Maestro delle arti marziali mistiche, agile e strategico." },
+  end12: { text: "Warblade", description: "Guerriero disciplinato che usa le sue conoscenze delle armi per dominare in combattimento." },
+  end13: { text: "Swashbuckler", description: "Duellante elegante e intelligente, abile nel combattimento acrobatico e preciso." },
+  end14: { text: "Maresciallo", description: "Leader carismatico che guida il gruppo con tattiche e ispirazione." },
+  end15: { text: "Guerriero", description: "Esperto di stili di combattimento e delle armi, ciascuno si specializza come vuole." },
+  end16: { text: "Barbaro", description: "Combattente brutale che entra in furia per aumentare la propria forza." },
+  end17: { text: "Ladro", description: "Abile in sotterfugi, trappole e attacchi precisi, sfrutta la sorpresa per sconfiggere i nemici." },
+  end18: { text: "Monaco", description: "Maestro delle arti marziali, combatte a mani nude con velocità e disciplina." },
+  end19: { text: "Totemist", description: "Usa l'essenza delle creature magiche per ottenere poteri mistici e trasformare il suo corpo." },
+  end20: { text: "Factotum", description: "Versatile tuttofare, capace di usare abilità, incantesimi e trucchi." },
+  end21: { text: "Bardo", description: "Incantatore e artista, supporta il gruppo con musica e magia." },
+  end22: { text: "Artefice", description: "Esperto di oggetti magici e tecnologia arcana, crea e modifica strumenti, armi e armature." },
+  end23: { text: "Mago combattente", description: "Unisce incantesimi spontanei e armi, abile sia nella magia che nel corpo a corpo." },
+  end24: { text: "Beguiler", description: "Illusionista e manipolatore, specializzato in inganno e sotterfugi per colpire il suo avversario." },
+  end25: { text: "Shugenja", description: "Incantatore divino naturale, legato agli elementi e al loro potere." },
+  end26: { text: "Druido", description: "Protettore della natura, può trasformarsi in animali e lanciare incantesimi naturali." },
+  end27: { text: "Paladino", description: "Guerriero sacro, incarna giustizia e bontà con i suoi poteri divini." },
+  end28: { text: "Duskblade", description: "Combina incantesimi arcani e attacchi fisici in un'unica forma di combattimento." },
+  end29: { text: "Guerriero psionico", description: "Usa la forza della sua mente per potenziare i propri attacchi fisici e dominare i suoi avversari." },
+};
+
+const buttonStyle: React.CSSProperties = {
+  fontSize: "1em",
+  padding: "8px 16px",
+  margin: "4px",
+  borderRadius: "4px",
+  border: "none",
+  backgroundColor: "#4CAF50",
+  color: "white",
+  cursor: "pointer",
+};
+
+const goBackButtonStyle: React.CSSProperties = {
+  fontSize: "0.8em",
+  padding: "6px 12px",
+  margin: "8px",
+  borderRadius: "4px",
+  border: "1px solid #ccc",
+  backgroundColor: "transparent",
+  cursor: "pointer",
+};
+
+const appContainerStyle: React.CSSProperties = {
+  backgroundColor: '#1a237e', // Dark Blue
+  backgroundImage: 'none', // Explicitly remove any background images
+  minHeight: '100vh', // Ensure full height
+  width: '100vw', // Full viewport width
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'flex-start', // Align content to the top
+  paddingTop: '20px', // Add some padding at the top
+  color: 'white', // Set default text color to white for better contrast
+  fontFamily: 'sans-serif', // A basic font
+  margin: 0,
+  padding: '20px 20px 0 20px',
+  boxSizing: 'border-box',
 };
 
 export default function App() {
   const [currentNode, setCurrentNode] = useState<NodeID>("start");
+  const [showStartScreen, setShowStartScreen] = useState(true);
+  const [history, setHistory] = useState<NodeID[]>(["start"]);
+  const [optionClickSound, setOptionClickSound] = useState<Howl | null>(null);
+  const [resultSound, setResultSound] = useState<Howl | null>(null); // State for the result sound
+  const [musicSound, setMusicSound] = useState<Howl | null>(null); // State for the music
+  const [musicPlaying, setMusicPlaying] = useState(false); // Track if music is playing
+  const [diceRollSound, setDiceRollSound] = useState<Howl | null>(null); // State for dice roll sound
+  const [isRollingDice, setIsRollingDice] = useState(false); // Track if dice is rolling
+  const [showResult, setShowResult] = useState(false); // Track if we should show the result
   const node = decisionTree[currentNode];
 
-  const restart = () => setCurrentNode("start");
+  const resultSoundPath = '/assets/ding.mp3'; // Path to the single result sound - DING.MP3
+  const musicSoundPath = '/assets/music.mp3'; // Path to the music
+  const diceRollSoundPath = '/assets/dice-roll.mp3'; // Path to the dice roll sound
 
-  if (!node) {
-    return (
-      <div style={{ padding: 20 }}>
-        <p>Errore: nodo non trovato</p>
-        <button onClick={restart}>Ricomincia</button>
-      </div>
-    );
-  }
+  useEffect(() => {
+    // Load the option click sound
+    const newOptionClickSound = new Howl({
+      src: ['/assets/click.mp3'], // Corrected path
+      preload: true,
+      onload: () => {
+        console.log("Option click sound loaded successfully");
+      },
+      onloaderror: (error: any) => { // Removed soundId, typed error
+        console.error("Error loading option click sound:", error);
+      }
+    });
+    setOptionClickSound(newOptionClickSound);
 
-  if (!node.options) {
-    return (
-      <div
-        style={{
-          maxWidth: 600,
-          margin: "40px auto",
-          padding: 20,
-          textAlign: "center",
-          border: "1px solid #ccc",
-          borderRadius: 8,
-        }}
-      >
-        <h2 style={{ fontSize: 24, marginBottom: 20 }}>🎉 Risultato: {node.text}</h2>
-        <button
-          onClick={restart}
-          style={{
-            padding: "10px 20px",
-            fontSize: 16,
-            cursor: "pointer",
-            borderRadius: 4,
-            backgroundColor: "#003366",
-            color: "#ffffff",
-            border: "none",
-          }}
-        >
-          Ricomincia
-        </button>
-      </div>
-    );
-  }
+    // Load the result sound
+    const newResultSound = new Howl({
+      src: [resultSoundPath], // Corrected path
+      preload: true,
+      onload: () => {
+        console.log("Result sound loaded successfully");
+      },
+      onloaderror: (error: any) => { // Removed soundId, typed error
+        console.error("Error loading result sound:", error);
+      },
+      onplayerror: (error: any) => { // Removed soundId, typed error
+        console.error("Error playing result sound:", error);
+      }
+    });
+    setResultSound(newResultSound);
+
+    // Load the music sound
+    const newMusicSound = new Howl({
+      src: [musicSoundPath], // Corrected path
+      loop: true, // Enable looping
+      preload: true,
+      onload: () => {
+        console.log("Music sound loaded successfully");
+      },
+      onloaderror: (error: any) => { // Removed soundId, typed error
+        console.error("Error loading music sound:", error);
+      }
+    });
+    setMusicSound(newMusicSound);
+
+    // Load the dice roll sound
+    const newDiceRollSound = new Howl({
+      src: [diceRollSoundPath],
+      preload: true,
+      onload: () => {
+        console.log("Dice roll sound loaded successfully");
+      },
+      onloaderror: (error: any) => {
+        console.error("Error loading dice roll sound:", error);
+      }
+    });
+    setDiceRollSound(newDiceRollSound);
+
+    return () => {
+      if (newOptionClickSound) newOptionClickSound.unload();
+      if (newResultSound) newResultSound.unload();
+      if (newMusicSound) newMusicSound.unload(); // Unload the music
+      if (newDiceRollSound) newDiceRollSound.unload(); // Unload the dice roll sound
+    };
+  }, [resultSoundPath, musicSoundPath, diceRollSoundPath]); // Only re-run if paths change
+
+  // Effect to trigger dice roll animation when reaching a result node
+  useEffect(() => {
+    if (!node?.options && !isRollingDice && !showResult) { // Check if it's a result node and not already rolling
+      console.log("Starting dice roll animation");
+      setIsRollingDice(true);
+      setShowResult(false);
+      
+      // Play dice roll sound
+      if (diceRollSound) {
+        diceRollSound.play();
+      }
+      
+      // After 3 seconds, stop rolling and show result
+      setTimeout(() => {
+        setIsRollingDice(false);
+        setShowResult(true);
+        
+        // Play result sound
+        if (resultSound) {
+          console.log("Playing result sound");
+          resultSound.play();
+        }
+      }, 3000);
+    }
+  }, [node, diceRollSound, resultSound, isRollingDice, showResult]); // Depend on relevant state
+
+  // Effect to start music when the component mounts or restarts
+  useEffect(() => {
+    if (musicSound && !showStartScreen && !musicPlaying) {
+      console.log("Playing music");
+      musicSound.play();
+      setMusicPlaying(true); // Set musicPlaying to true
+    }
+  }, [musicSound, showStartScreen, musicPlaying]);
+
+  const restart = () => {
+    setCurrentNode("start");
+    setHistory(["start"]);
+    setIsRollingDice(false);
+    setShowResult(false);
+  };
+
+  const restartFromBeginning = () => {
+    setCurrentNode("start");
+    setShowStartScreen(true);
+    setHistory(["start"]);
+    setIsRollingDice(false);
+    setShowResult(false);
+
+    // Stop the current music if it's playing
+    // if (musicSound) {
+    //   musicSound.stop();
+    //   musicSound.play(); // Restart music on start from beginning
+    // }
+  };
+
+  const goToPreviousNode = () => {
+    if (history.length > 1) {
+      const newHistory = [...history];
+      newHistory.pop();
+      const previousNode = newHistory[newHistory.length - 1];
+      setCurrentNode(previousNode);
+      setHistory(newHistory);
+    }
+  };
+
+  const handleOptionClick = (nextId: NodeID) => {
+    // Play the click sound
+    if (optionClickSound) {
+      optionClickSound.play();
+    }
+
+    setCurrentNode(nextId);
+    setHistory([...history, nextId]);
+  };
 
   return (
-    <div
-      style={{
-        maxWidth: 600,
-        margin: "40px auto",
-        padding: 20,
-        border: "1px solid #ccc",
-        borderRadius: 8,
-      }}
-    >
-      <h2 style={{ fontSize: 20, marginBottom: 16 }}>{node.text}</h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {Object.entries(node.options).map(([nextId, optionText]) => (
-          <button
-            key={nextId}
-            onClick={() => setCurrentNode(nextId)}
+    <div style={appContainerStyle}>
+      {showStartScreen ? (
+        <>
+          <div
+            className="fantasy-container"
             style={{
-              padding: "10px",
-              fontSize: 16,
-              cursor: "pointer",
-              borderRadius: 4,
-              border: "1px solid #666",
-              backgroundColor: "#003366",
-              color: "#ffffff",
-              transition: "background-color 0.2s ease",
+              maxWidth: 650,
+              margin: "40px auto",
+              padding: 48,
+              textAlign: "center" as const,
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#0055aa")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#003366")
-            }
           >
-            {optionText}
-          </button>
-        ))}
-      </div>
+            <h1 style={{ fontSize: "3.5em", marginBottom: 32 }}>
+              Trova la tua classe
+            </h1>
+            <p style={{ fontSize: "1.3em", marginBottom: 32, lineHeight: 1.6 }}>
+              Scopri quale classe de Dungeons & Dragons si adatta meglio al tuo
+              stile di gioco
+            </p>
+            <button
+              onClick={() => {
+                setShowStartScreen(false);
+                if (musicSound && !musicPlaying) {
+                  musicSound.play();
+                  setMusicPlaying(true);
+                }
+              }}
+              style={buttonStyle}
+            >
+              Inizia l'Avventura
+            </button>
+          </div>
+        </>
+      ) : node ? (
+        node.options ? (
+          <>
+            <div
+              className="fantasy-container"
+              style={{
+                maxWidth: 650,
+                margin: "40px auto",
+                padding: 32,
+                textAlign: "center" as const,
+              }}
+            >
+              <h2 style={{ marginBottom: 24, fontSize: "1.6em" }}>
+                {node.text}
+              </h2>
+              <div style={{ display: "flex", flexDirection: "column" as const, gap: 16 }}>
+                {Object.entries(node.options).map(([nextId, optionText]) => (
+                  <button
+                    key={nextId}
+                    onClick={() => handleOptionClick(nextId)}
+                    style={buttonStyle}
+                  >
+                    {optionText}
+                  </button>
+                ))}
+              </div>
+              {history.length > 1 && (
+                <button
+                  onClick={goToPreviousNode}
+                  className="go-back-button"
+                  style={goBackButtonStyle}
+                >
+                  Go Back
+                </button>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            {isRollingDice ? (
+              <div
+                className="dice-container fantasy-container"
+                style={{
+                  maxWidth: 650,
+                  margin: "40px auto",
+                  padding: 32,
+                  textAlign: "center" as const,
+                }}
+              >
+                <div className="d20-dice">
+                  <div className="d20-face d20-face-1"><span className="d20-number">1</span></div>
+                  <div className="d20-face d20-face-2"><span className="d20-number">2</span></div>
+                  <div className="d20-face d20-face-3"><span className="d20-number">3</span></div>
+                  <div className="d20-face d20-face-4"><span className="d20-number">4</span></div>
+                  <div className="d20-face d20-face-5"><span className="d20-number">5</span></div>
+                  <div className="d20-face d20-face-6"><span className="d20-number">6</span></div>
+                  <div className="d20-face d20-face-7"><span className="d20-number">7</span></div>
+                  <div className="d20-face d20-face-8"><span className="d20-number">8</span></div>
+                  <div className="d20-face d20-face-9"><span className="d20-number">9</span></div>
+                  <div className="d20-face d20-face-10"><span className="d20-number">10</span></div>
+                  <div className="d20-face d20-face-11"><span className="d20-number">11</span></div>
+                  <div className="d20-face d20-face-12"><span className="d20-number">12</span></div>
+                  <div className="d20-face d20-face-13"><span className="d20-number">13</span></div>
+                  <div className="d20-face d20-face-14"><span className="d20-number">14</span></div>
+                  <div className="d20-face d20-face-15"><span className="d20-number">15</span></div>
+                  <div className="d20-face d20-face-16"><span className="d20-number">16</span></div>
+                  <div className="d20-face d20-face-17"><span className="d20-number">17</span></div>
+                  <div className="d20-face d20-face-18"><span className="d20-number">18</span></div>
+                  <div className="d20-face d20-face-19"><span className="d20-number">19</span></div>
+                  <div className="d20-face d20-face-20"><span className="d20-number">20</span></div>
+                </div>
+                <div className="dice-rolling-text">Ora tiriamo il dado...</div>
+                <div className="dice-subtitle">Per trovare la tua classe...</div>
+              </div>
+            ) : showResult ? (
+              <div
+                className="result-container"
+                style={{
+                  maxWidth: 650,
+                  margin: "40px auto",
+                  padding: 32,
+                  textAlign: "center" as const,
+                }}
+              >
+                <div style={{ fontSize: 48, marginBottom: 16 }}>⚔️</div>
+                <h2 className="result-title">La tua classe: {node.text}</h2>
+                {"description" in node && (
+                  <p className="result-description">
+                    {node.description}
+                  </p>
+                )}
+                <button
+                  className="restart-button"
+                  onClick={restartFromBeginning}
+                  style={buttonStyle}
+                >
+                  Ricomincia l'Avventura
+                </button>
+              </div>
+            ) : null}
+          </>
+        )
+      ) : (
+        <>
+          <div style={{ padding: 20 }}>
+            <p>Errore: nodo non trovato</p>
+            <button onClick={restart} style={buttonStyle}>
+              Ricomincia
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
