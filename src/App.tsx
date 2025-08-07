@@ -517,10 +517,29 @@ export default function App() {
                 }}
               >
                 <div className="d20-dice">
-                  <div className="d20-face">20</div>
+                  <div className="d20-face d20-face-1"><span className="d20-number">1</span></div>
+                  <div className="d20-face d20-face-2"><span className="d20-number">2</span></div>
+                  <div className="d20-face d20-face-3"><span className="d20-number">3</span></div>
+                  <div className="d20-face d20-face-4"><span className="d20-number">4</span></div>
+                  <div className="d20-face d20-face-5"><span className="d20-number">5</span></div>
+                  <div className="d20-face d20-face-6"><span className="d20-number">6</span></div>
+                  <div className="d20-face d20-face-7"><span className="d20-number">7</span></div>
+                  <div className="d20-face d20-face-8"><span className="d20-number">8</span></div>
+                  <div className="d20-face d20-face-9"><span className="d20-number">9</span></div>
+                  <div className="d20-face d20-face-10"><span className="d20-number">10</span></div>
+                  <div className="d20-face d20-face-11"><span className="d20-number">11</span></div>
+                  <div className="d20-face d20-face-12"><span className="d20-number">12</span></div>
+                  <div className="d20-face d20-face-13"><span className="d20-number">13</span></div>
+                  <div className="d20-face d20-face-14"><span className="d20-number">14</span></div>
+                  <div className="d20-face d20-face-15"><span className="d20-number">15</span></div>
+                  <div className="d20-face d20-face-16"><span className="d20-number">16</span></div>
+                  <div className="d20-face d20-face-17"><span className="d20-number">17</span></div>
+                  <div className="d20-face d20-face-18"><span className="d20-number">18</span></div>
+                  <div className="d20-face d20-face-19"><span className="d20-number">19</span></div>
+                  <div className="d20-face d20-face-20"><span className="d20-number">20</span></div>
                 </div>
-                <div className="dice-rolling-text">Rolling the dice...</div>
-                <div className="dice-subtitle">Determining your D&D class</div>
+                <div className="dice-rolling-text">Ora tiriamo il dado...</div>
+                <div className="dice-subtitle">Per trovare la tua classe...</div>
               </div>
             ) : showResult ? (
               <div
